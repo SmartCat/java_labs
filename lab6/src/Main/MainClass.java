@@ -1,5 +1,8 @@
 package Main;
 
+import ProductInfoInput.ProductInput;
+import ProductInfoInput.ProductKeyboardInput;
+import ProductInfoInput.ProductRandomInput;
 import Products.*;
 
 import java.io.*;
@@ -13,25 +16,31 @@ import java.util.Iterator;
  */
 public class MainClass {
     private static final String STACK_SERIALIZE_FILE_NAME = "./serialized/stack-product.serial";
+	private static ProductInput productInput;
 
     public static void main (String[] args) {
         Stack<IProduct> productContainer = initContainer();
 
         BufferedReader bufIn = new BufferedReader(new InputStreamReader(System.in));
+	    setProductInput(bufIn);
+
         int answer;
 
         do {
-            printCommandTips();
-            answer = getIntFromStream(bufIn);
+	        String[] tips = {"Add product", "List products", "Sort products", "Exit"};
+            Tools.printCommandTips(tips);
+            answer = Tools.getIntFromStream(bufIn);
 
             switch (answer) {
                 case 1:
+	                productContainer.add(productInput.inputProduct());
                     break;
                 case 2:
                     System.out.println("Container:");
                     productContainer.printAll();
                     break;
                 case 3:
+	                Tools.sortContainer(productContainer, bufIn);
                     break;
                 case 4:
                     System.out.println("Exiting...");
@@ -101,25 +110,29 @@ public class MainClass {
         os.close();
     }
 
-    private static int getIntFromStream(BufferedReader reader) {
-        int num = 0;
-        try {
-            String answerStr = reader.readLine();
-            num = Integer.parseInt(answerStr);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return num;
-    }
+	private static void setProductInput(BufferedReader reader) {
+		int answer;
 
-    private static void printCommandTips() {
-        StringBuilder message = new StringBuilder("\n");
-        message.append("1 - Add product").append("\n");
-        message.append("2 - List products").append("\n");
-        message.append("3 - Sort products").append("\n");
-        message.append("4 - Exit").append("\n");
-        System.out.print(message.toString());
-    }
+		System.out.println("Choose product info source:");
+		do {
+			String[] tips = {"Random", "Keyboard"};
+			Tools.printCommandTips(tips);
+			answer = Tools.getIntFromStream(reader);
+
+			switch (answer) {
+				case 1:
+					productInput = new ProductRandomInput(reader);
+					break;
+				case 2:
+					productInput = new ProductKeyboardInput(reader);
+					break;
+				default:
+					System.out.println("Something wrong, try again");
+					break;
+			}
+
+		} while (answer != 1 && answer != 2);
+	}
 
     public static float avgPrice(Stack<IProduct> container) {
 		if (container.count() == 0) return 0;

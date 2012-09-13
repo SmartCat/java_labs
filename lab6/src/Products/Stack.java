@@ -2,6 +2,7 @@ package Products;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 
 /**
@@ -107,6 +108,10 @@ public class Stack<E extends IProduct> implements Cloneable, Serializable {
             }
         };
     }
+
+	public void sortBy(Comparator<IProduct> comparator) {
+		Arrays.sort(mContainer, comparator);
+	}
 
     public void printAll() {
         for (int i = 0; i < containerCount; i++) {
