@@ -16,6 +16,7 @@ local.properties
 workspace.xml
 .classpath
 .settings/
+.idea/
 .loadpath
 
 # External tool builders
